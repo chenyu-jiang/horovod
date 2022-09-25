@@ -15,6 +15,8 @@
 
 #if HAVE_CUDA
 #include <THC/THC.h>
+#include <c10/cuda/CUDAStream.h>
+#include <c10/cuda/CUDAException.h>
 #include <cassert>
 #include <mutex>
 #include <queue>
@@ -54,7 +56,7 @@ TorchReadyEvent::TorchReadyEvent(int device) : device_(device) {
           &cuda_event_, cudaEventBlockingSync | cudaEventDisableTiming));
     }
   }
-  auto stream = THCState_getCurrentStreamOnDevice(state, device_);
+  auto stream = c10::cuda::getCurrentCUDAStream(device_);
   THCudaCheck(cudaEventRecord(cuda_event_, stream));
 }
 
