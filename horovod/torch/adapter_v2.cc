@@ -70,7 +70,7 @@ const TensorShape TorchTensor::shape() const {
 const void* TorchTensor::data() const { return tensor_.data_ptr(); }
 
 int64_t TorchTensor::size() const {
-  return torch::elementSize(torch::typeMetaToScalarType(tensor_.dtype())) * tensor_.numel();
+  return c10::elementSize(c10::typeMetaToScalarType(tensor_.dtype())) * tensor_.numel();
 }
 
 TorchOpContext::TorchOpContext(int device, ::torch::Tensor output)
