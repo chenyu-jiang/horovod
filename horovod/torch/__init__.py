@@ -324,18 +324,19 @@ def broadcast_optimizer_state(optimizer, root_rank):
         for pid in group['params']:
             param_state = state_dict['state'][pid]
             for name, p in param_state.items():
-                # Some parameter names may appear more than once, in which
-                # case we ensure they have a unique identifier defined by
-                # their order
-                occurrences[name] += 1
-                key = '%s.%d' % (str(name), occurrences[name])
+                if p is not None:
+                    # Some parameter names may appear more than once, in which
+                    # case we ensure they have a unique identifier defined by
+                    # their order
+                    occurrences[name] += 1
+                    key = '%s.%d' % (str(name), occurrences[name])
 
-                if not torch.is_tensor(p):
-                    # Wrap the scalar in a FloatTensor, and remember its type
-                    # so we can cast it back after unwrapping
-                    t = type(p)
-                    p = torch.Tensor([p])
-                    callbacks[key] = _create_callback(pid, name, t, p)
+                    if not torch.is_tensor(p):
+                        # Wrap the scalar in a FloatTensor, and remember its type
+                        # so we can cast it back after unwrapping
+                        t = type(p)
+                        p = torch.Tensor([p])
+                        callbacks[key] = _create_callback(pid, name, t, p)
 
                 params.append((key, p))
 
