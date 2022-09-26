@@ -221,8 +221,9 @@ def broadcast_parameters(params, root_rank):
     # Run asynchronous broadcasts.
     handles = []
     for name, p in params:
-        handle = broadcast_async_(p, root_rank, name)
-        handles.append(handle)
+        if p is not None:
+            handle = broadcast_async_(p, root_rank, name)
+            handles.append(handle)
 
     # Wait for completion.
     for handle in handles:
